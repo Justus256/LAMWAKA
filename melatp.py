@@ -254,7 +254,9 @@ def update_weekly_summary(n_clicks):
 
         return summary
     return []
+import os
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    port =int(os.environ.get("PORT", 10000))
+    app.run_server(debug=True, port=port)
     
