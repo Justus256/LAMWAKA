@@ -6,11 +6,18 @@ from datetime import datetime, timedelta
 import base64
 import io
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, initialize_app, firestore
 
 # Initialize Firebase
-cred = credentials.Certificate(r"C:\Users\NSABA\Documents\MELATPROJECT\melatproject-firebase-adminsdk-fbsvc-db2ecd7aeb.json")
-firebase_admin.initialize_app(cred)
+import os
+import json
+firebase_credentials = os.getenv('FIREBASE_CONFIG')
+if firebase_credentials:
+    cred_dict = json.loads(firebase_credentials)
+    cred = credentials.Certificate(cred_dict)
+    initialize_app(cred)
+else:
+    print("Firebase credentials not found in environment variables")
 db = firestore.client()
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
