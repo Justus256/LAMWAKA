@@ -5,6 +5,8 @@ dash-html-components==2.0.0
 dash-table==5.0.0
 Flask==3.0.3
 firebase-admin==6.6.0
+plotly==6.0.0
+pandas=2.2.3
 pydantic
 pytest
 pytest-cov
