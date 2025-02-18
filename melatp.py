@@ -13,14 +13,18 @@ import pandas as pd
 # Initialize Firebase
 import os
 import json
+from firebase_admin import credentials, initialize_app
+import firebase_admin
+
 firebase_credentials = os.getenv('FIREBASE_CONFIG')
 if firebase_credentials:
     cred_dict = json.loads(firebase_credentials)
     cred = credentials.Certificate(cred_dict)
     initialize_app(cred)
+    print("Firebase app initialized successfully")
 else:
     print("Firebase credentials not found in environment variables")
-db = firestore.client()
+db = firesbase_admin.firetore.client()
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
