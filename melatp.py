@@ -194,4 +194,4 @@ def update_weekly_summary(n_clicks):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run_server
+    app.run_server(port=port)
