@@ -3,8 +3,6 @@ import dash_bootstrap_components as dbc
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from datetime import datetime, timedelta
-import base64
-import io
 import firebase_admin
 from firebase_admin import credentials, firestore
 import plotly.express as px
@@ -95,11 +93,10 @@ app.layout = dbc.Container([
         dbc.Col(html.Div([
             html.H5("Inventory List"),
             html.Div(id='inventory-list', children=[
-                html.Li(f"Perfume: {item['perfume_name']}, Quantity: {item['quantity']}, Date: {item['stocked_date']}, Amount Paid: {item['amount_paid']}.") for item in inventory_data
+                html.Li(f"Perfume: {item.get('perfume_name', 'N/A')}, Quantity: {item.get('quantity', 'N/A')}, Date: {item.get('stocked_date', 'N/A')}, Amount Paid: {item.get('amount_paid', 'N/A')}.") for item in inventory_data
             ]),
         ]), width=12, lg=8)
     ]),
-
     dbc.Row([
         dbc.Col(html.Div([
             html.H4('Sales Tracking'),
@@ -121,10 +118,11 @@ app.layout = dbc.Container([
         dbc.Col(html.Div([
             html.H5('Sales List'),
             html.Ul(id="sales-list", children=[
-                html.Li(f"Buyer: {item['buyer_name']}, Perfume: {item['perfume_name']}, Date: {item['sale_date']}, Amount: {item['sale_amount']}. Comments: {item['sale_comments']}") for item in sales_data
+                html.Li(f"Buyer: {item.get('buyer_name', 'N/A')}, Perfume: {item.get('perfume_name', 'N/A')}, Date: {item.get('sale_date', 'N/A')}, Amount: {item.get('sale_amount', 'N/A')}. Comments: {item.get('sale_comments', 'N/A')}") for item in sales_data
             ]),
         ]), width=12, lg=8)
     ]),
+
     dbc.Row([
         dbc.Col(html.Div([
             html.H4('Debtors Management'),
@@ -146,7 +144,7 @@ app.layout = dbc.Container([
         dbc.Col(html.Div([
             html.H5('Debtors List'),
             html.Ul(id="debtors-list", children=[
-                html.Li(f"Debtor: {item['debtor_name']}, Phone: {item['debtor_phone']}, Date: {item['debtor_date']}, Amount: {item['debtor_amount']}. Comments: {item['debtor_comments']}") for item in debtors_data
+                html.Li(f"Debtor: {item.get('debtor_name', 'N/A')}, Phone: {item.get('debtor_phone', 'N/A')}, Date: {item.get('debtor_date', 'N/A')}, Amount: {item.get('debtor_amount', 'N/A')}. Comments: {item.get('debtor_comments', 'N/A')}") for item in debtors_data
             ]),
         ]), width=12, lg=8)
     ]),
@@ -159,7 +157,6 @@ app.layout = dbc.Container([
         ]), width=12)
     ])
 ], fluid=True)
-
 @app.callback(
     Output("inventory-list", "children"),
     Input("add-inventory-btn", 'n_clicks'),
@@ -188,10 +185,7 @@ def update_inventory_list(n_clicks, stocked_date, source, perfume_name, amount_p
         }
         db.collection('inventory').add(inventory_item)
         inventory_data.append(inventory_item)
-        return [html.Li(f"Perfume: {item['perfume_name']}, Quantity: {item['quantity']}, Date: {item['stocked_date']}, Amount Paid: {item['amount_paid']}.") for item in inventory_data]
-        db.collection('inventory').add(inventory_item)
-        inventory_data.append(inventory_item)
-        return [html.Li(f"Perfume: {item['perfume_name']}, Quantity: {item['quantity']}, Date: {item['stocked_date']}, Amount Paid: {item['amount_paid']}.") for item in inventory_data]
+        return [html.Li(f"Perfume: {item.get('perfume_name', 'N/A')}, Quantity: {item.get('quantity', 'N/A')}, Date: {item.get('stocked_date', 'N/A')}, Amount Paid: {item.get('amount_paid', 'N/A')}.") for item in inventory_data]
     return []
 
 @app.callback(
@@ -214,7 +208,7 @@ def update_sales_list(n_clicks, sale_date, buyer_name, perfume_name, sale_amount
         }
         db.collection('sales').add(sale_item)
         sales_data.append(sale_item)
-        return [html.Li(f"Buyer: {item['buyer_name']}, Perfume: {item['perfume_name']}, Date: {item['sale_date']}, Amount: {item['sale_amount']}. Comments: {item['sale_comments']}") for item in sales_data]
+        return [html.Li(f"Buyer: {item.get('buyer_name', 'N/A')}, Perfume: {item.get('perfume_name', 'N/A')}, Date: {item.get('sale_date', 'N/A')}, Amount: {item.get('sale_amount', 'N/A')}. Comments: {item.get('sale_comments', 'N/A')}") for item in sales_data]
     return []
 
 @app.callback(
@@ -237,7 +231,7 @@ def update_debtors_list(n_clicks, debtor_name, debtor_phone, debtor_date, debtor
         }
         db.collection('debtors').add(debtor_item)
         debtors_data.append(debtor_item)
-        return [html.Li(f"Debtor: {item['debtor_name']}, Phone: {item['debtor_phone']}, Date: {item['debtor_date']}, Amount: {item['debtor_amount']}. Comments: {item['debtor_comments']}") for item in debtors_data]
+        return [html.Li(f"Debtor: {item.get('debtor_name', 'N/A')}, Phone: {item.get('debtor_phone', 'N/A')}, Date: {item.get('debtor_date', 'N/A')}, Amount: {item.get('debtor_amount', 'N/A')}. Comments: {item.get('debtor_comments', 'N/A')}") for item in debtors_data]
     return []
 
 @app.callback(
