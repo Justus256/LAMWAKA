@@ -1,4 +1,3 @@
-
 import dash
 import dash_bootstrap_components as dbc
 from dash import html, dcc
@@ -30,6 +29,15 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 inventory_data = []
 sales_data = []
 debtors_data = []
+
+# Fetch data from Firestore
+def fetch_data():
+    global inventory_data, sales_data, debtors_data
+    inventory_data = [doc.to_dict() for doc in db.collection('inventory').stream()]
+    sales_data = [doc.to_dict() for doc in db.collection('sales').stream()]
+    debtors_data = [doc.to_dict() for doc in db.collection('debtors').stream()]
+
+fetch_data()
 
 app.layout = dbc.Container([
     html.H1('WELCOME TO JUSMEL BEAUTY HAVEN'),
@@ -86,7 +94,9 @@ app.layout = dbc.Container([
 
         dbc.Col(html.Div([
             html.H5("Inventory List"),
-            html.Div(id='inventory-list'),
+            html.Div(id='inventory-list', children=[
+                html.Li(f"Perfume: {item['perfume_name']}, Quantity: {item['quantity']}, Date: {item['stocked_date']}, Amount Paid: {item['amount_paid']}.") for item in inventory_data
+            ]),
         ]), width=12, lg=8)
     ]),
 
@@ -110,7 +120,9 @@ app.layout = dbc.Container([
 
         dbc.Col(html.Div([
             html.H5('Sales List'),
-            html.Ul(id="sales-list")
+            html.Ul(id="sales-list", children=[
+                html.Li(f"Buyer: {item['buyer_name']}, Perfume: {item['perfume_name']}, Date: {item['sale_date']}, Amount: {item['sale_amount']}. Comments: {item['sale_comments']}") for item in sales_data
+            ]),
         ]), width=12, lg=8)
     ]),
     dbc.Row([
@@ -133,7 +145,9 @@ app.layout = dbc.Container([
 
         dbc.Col(html.Div([
             html.H5('Debtors List'),
-            html.Ul(id="debtors-list"),
+            html.Ul(id="debtors-list", children=[
+                html.Li(f"Debtor: {item['debtor_name']}, Phone: {item['debtor_phone']}, Date: {item['debtor_date']}, Amount: {item['debtor_amount']}. Comments: {item['debtor_comments']}") for item in debtors_data
+            ]),
         ]), width=12, lg=8)
     ]),
 
@@ -172,6 +186,9 @@ def update_inventory_list(n_clicks, stocked_date, source, perfume_name, amount_p
             'contents': contents,
             'comments': comments
         }
+        db.collection('inventory').add(inventory_item)
+        inventory_data.append(inventory_item)
+        return [html.Li(f"Perfume: {item['perfume_name']}, Quantity: {item['quantity']}, Date: {item['stocked_date']}, Amount Paid: {item['amount_paid']}.") for item in inventory_data]
         db.collection('inventory').add(inventory_item)
         inventory_data.append(inventory_item)
         return [html.Li(f"Perfume: {item['perfume_name']}, Quantity: {item['quantity']}, Date: {item['stocked_date']}, Amount Paid: {item['amount_paid']}.") for item in inventory_data]
@@ -251,5 +268,3 @@ def update_weekly_summary(n_clicks):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run_server(host='0.0.0.0', port=port)
-
-                       
