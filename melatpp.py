@@ -30,13 +30,12 @@ debtors_data = []
 
 # Fetch data from Firestore
 def fetch_data():
-    global inventory_data, sales_data, debtors_data
+    global db, inventory_data, sales_data, debtors_data
     inventory_data = [doc.to_dict() for doc in db.collection('inventory').stream()]
     sales_data = [doc.to_dict() for doc in db.collection('sales').stream()]
     debtors_data = [doc.to_dict() for doc in db.collection('debtors').stream()]
 
 fetch_data()
-
 app.layout = dbc.Container([
     html.H1('WELCOME TO JUSMEL BEAUTY HAVEN'),
     html.P('Manage your sales, inventory, and debtors efficiently.'),
@@ -47,13 +46,13 @@ app.layout = dbc.Container([
             html.P("Date stocked, source, perfume name, amount paid, quantity, gender, description, image, comments."),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='stocked-date', type='date', placeholder='Date Stocked'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='source', type='text', placeholder='Source'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='perfume-name-inventory', type='text', placeholder='Perfume Name'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='amount-paid', type='number', placeholder='Amount Paid'), width=6, sm=12, lg=3),
+                    dbc.Col(dbc.Input(id='stocked-date', type='date', placeholder='Date Stocked'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='source', type='text', placeholder='Source'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='perfume-name-inventory', type='text', placeholder='Perfume Name'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='amount-paid', type='number', placeholder='Amount Paid'), width=12, lg=3),
                 ]),
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='quantity', type='number', placeholder='Quantity'), width=6, sm=12, lg=3),
+                    dbc.Col(dbc.Input(id='quantity', type='number', placeholder='Quantity'), width=12, lg=3),
                     dbc.Col(dbc.Select(
                         id='gender',
                         options=[
@@ -62,7 +61,7 @@ app.layout = dbc.Container([
                             {'label': 'Unisex', 'value': 'Unisex'}
                         ],
                         placeholder='Gender'
-                    ), width=6, sm=12, lg=3),
+                    ), width=12, lg=3),
                     dbc.Col(dbc.Input(id='description', type='text', placeholder='Description'), width=12, lg=6),
                 ]),
                 dbc.Row([
@@ -97,16 +96,17 @@ app.layout = dbc.Container([
             ]),
         ]), width=12, lg=8)
     ]),
+
     dbc.Row([
         dbc.Col(html.Div([
             html.H4('Sales Tracking'),
             html.P('Date sold, buyer name, perfume name, amount, comments.'),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id="sale-date", type='date', placeholder='Date Sold'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='buyer-name', type='text', placeholder='Buyer Name'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='perfume-name-sale', type='text', placeholder='Perfume Name'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='sale-amount', type='number', placeholder='Amount'), width=6, sm=12, lg=3),
+                    dbc.Col(dbc.Input(id="sale-date", type='date', placeholder='Date Sold'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='buyer-name', type='text', placeholder='Buyer Name'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='perfume-name-sale', type='text', placeholder='Perfume Name'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='sale-amount', type='number', placeholder='Amount'), width=12, lg=3),
                 ]),
                 dbc.Row([
                     dbc.Col(dbc.Input(id='sale-comments', type='text', placeholder='Comments'), width=12),
@@ -129,10 +129,10 @@ app.layout = dbc.Container([
             html.P('Debtor name, telephone number, date, amount, comments.'),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='debtor-name', type='text', placeholder='Debtor Name'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-phone', type='text', placeholder='Telephone Number'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-date', type='date', placeholder='Date'), width=6, sm=12, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-amount', type='number', placeholder='Amount'), width=6, sm=12, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-name', type='text', placeholder='Debtor Name'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-phone', type='text', placeholder='Telephone Number'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-date', type='date', placeholder='Date'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-amount', type='number', placeholder='Amount'), width=12, lg=3),
                 ]),
                 dbc.Row([
                     dbc.Col(dbc.Input(id='debtor-comments', type='text', placeholder='Comments'), width=12),
@@ -233,7 +233,6 @@ def update_debtors_list(n_clicks, debtor_name, debtor_phone, debtor_date, debtor
         debtors_data.append(debtor_item)
         return [html.Li(f"Debtor: {item.get('debtor_name', 'N/A')}, Phone: {item.get('debtor_phone', 'N/A')}, Date: {item.get('debtor_date', 'N/A')}, Amount: {item.get('debtor_amount', 'N/A')}. Comments: {item.get('debtor_comments', 'N/A')}") for item in debtors_data]
     return []
-
 @app.callback(
     Output('weekly-summary-graph', 'figure'),
     Input("update-summary-btn", "n_clicks"),
@@ -262,3 +261,4 @@ def update_weekly_summary(n_clicks):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run_server(host='0.0.0.0', port=port)
+
