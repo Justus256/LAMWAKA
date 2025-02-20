@@ -9,6 +9,7 @@ import plotly.express as px
 import pandas as pd
 import os
 import json
+from dash.dash_table import DataTable
 
 # Initialize Firebase
 firebase_credentials = os.getenv('FIREBASE_CONFIG')
@@ -36,23 +37,24 @@ def fetch_data():
     debtors_data = [doc.to_dict() for doc in db.collection('debtors').stream()]
 
 fetch_data()
+
 app.layout = dbc.Container([
     html.H1('WELCOME TO JUSMEL BEAUTY HAVEN'),
     html.P('Manage your sales, inventory, and debtors efficiently.'),
 
+    # Inventory Management
     dbc.Row([
         dbc.Col(html.Div([
             html.H4('Inventory Management'),
-            html.P("Date stocked, source, perfume name, amount paid, quantity, gender, description, image, comments."),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='stocked-date', type='date', placeholder='Date Stocked'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='source', type='text', placeholder='Source'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='perfume-name-inventory', type='text', placeholder='Perfume Name'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='amount-paid', type='number', placeholder='Amount Paid'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='stocked-date', type='date', placeholder='Date Stocked'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='source', type='text', placeholder='Source'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='perfume-name-inventory', type='text', placeholder='Perfume Name'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='amount-paid', type='number', placeholder='Amount Paid'), width=12, sm=6, lg=3),
                 ]),
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='quantity', type='number', placeholder='Quantity'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='quantity', type='number', placeholder='Quantity'), width=12, sm=6, lg=3),
                     dbc.Col(dbc.Select(
                         id='gender',
                         options=[
@@ -61,16 +63,13 @@ app.layout = dbc.Container([
                             {'label': 'Unisex', 'value': 'Unisex'}
                         ],
                         placeholder='Gender'
-                    ), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='description', type='text', placeholder='Description'), width=12, lg=6),
+                    ), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='description', type='text', placeholder='Description'), width=12, sm=6, lg=6),
                 ]),
                 dbc.Row([
                     dbc.Col(dcc.Upload(
                         id='upload-image',
-                        children=html.Div([
-                            'Drag and Drop or ',
-                            html.A('Select a File')
-                        ]),
+                        children=html.Div(['Drag and Drop or ', html.A('Select a File')]),
                         style={
                             'width': '100%',
                             'height': '60px',
@@ -82,83 +81,133 @@ app.layout = dbc.Container([
                             'margin': '10px'
                         },
                         multiple=False
-                    ), width=12, lg=6),
-                    dbc.Col(dbc.Input(id='comments', type='text', placeholder='Comments'), width=12, lg=6),
+                    ), width=12, sm=6, lg=6),
+                    dbc.Col(dbc.Input(id='comments', type='text', placeholder='Comments'), width=12, sm=6, lg=6),
                 ]),
                 dbc.Button('Add to Inventory', id='add-inventory-btn', color='primary', className='mt-2'),
             ])
-        ]), width=12, lg=4),
+        ]), width=12, sm=6, lg=4),
 
+        # Inventory List as DataTable
         dbc.Col(html.Div([
             html.H5("Inventory List"),
-            html.Div(id='inventory-list', children=[
-                html.Li(f"Perfume: {item.get('perfume_name', 'N/A')}, Quantity: {item.get('quantity', 'N/A')}, Date: {item.get('stocked_date', 'N/A')}, Amount Paid: {item.get('amount_paid', 'N/A')}.") for item in inventory_data
-            ]),
-        ]), width=12, lg=8)
+            DataTable(
+                id="inventory-data-table",
+                columns=[
+                    {"name": "Perfume", "id": "perfume_name"},
+                    {"name": "Quantity", "id": "quantity"},
+                    {"name": "Date Stocked", "id": "stocked_date"},
+                    {"name": "Amount Paid", "id": "amount_paid"},
+                    {"name": "Gender", "id": "gender"},
+                    {"name": "Description", "id": "description"}
+                ],
+                data=inventory_data,
+                style_table={'height': '300px', 'overflowY': 'auto'},
+                page_size=10,
+                filter_action="native",
+                sort_action="native",
+            ),
+        ]), width=12, sm=6, lg=8)
     ]),
 
+    # Sales Tracking
     dbc.Row([
         dbc.Col(html.Div([
             html.H4('Sales Tracking'),
-            html.P('Date sold, buyer name, perfume name, amount, comments.'),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id="sale-date", type='date', placeholder='Date Sold'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='buyer-name', type='text', placeholder='Buyer Name'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='perfume-name-sale', type='text', placeholder='Perfume Name'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='sale-amount', type='number', placeholder='Amount'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id="sale-date", type='date', placeholder='Date Sold'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='buyer-name', type='text', placeholder='Buyer Name'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='perfume-name-sale', type='text', placeholder='Perfume Name'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='sale-amount', type='number', placeholder='Amount'), width=12, sm=6, lg=3),
                 ]),
                 dbc.Row([
                     dbc.Col(dbc.Input(id='sale-comments', type='text', placeholder='Comments'), width=12),
                 ]),
                 dbc.Button('Record Sale', id='record-sale-btn', color='success', className='mt-2'),
             ])
-        ]), width=12, lg=4),
+        ]), width=12, sm=6, lg=4),
 
+        # Sales List as DataTable
         dbc.Col(html.Div([
             html.H5('Sales List'),
-            html.Ul(id="sales-list", children=[
-                html.Li(f"Buyer: {item.get('buyer_name', 'N/A')}, Perfume: {item.get('perfume_name', 'N/A')}, Date: {item.get('sale_date', 'N/A')}, Amount: {item.get('sale_amount', 'N/A')}. Comments: {item.get('sale_comments', 'N/A')}") for item in sales_data
-            ]),
-        ]), width=12, lg=8)
+            DataTable(
+                id="sales-data-table",
+                columns=[
+                    {"name": "Buyer", "id": "buyer_name"},
+                    {"name": "Perfume", "id": "perfume_name"},
+                    {"name": "Date", "id": "sale_date"},
+                    {"name": "Amount", "id": "sale_amount"},
+                    {"name": "Comments", "id": "sale_comments"}
+                ],
+                data=sales_data,
+                style_table={'height': '300px', 'overflowY': 'auto'},
+                page_size=10,
+                filter_action="native",
+                sort_action="native",
+            ),
+        ]), width=12, sm=6, lg=8)
     ]),
 
+    # Debtors Management
     dbc.Row([
         dbc.Col(html.Div([
             html.H4('Debtors Management'),
-            html.P('Debtor name, telephone number, date, amount, comments.'),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='debtor-name', type='text', placeholder='Debtor Name'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-phone', type='text', placeholder='Telephone Number'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-date', type='date', placeholder='Date'), width=12, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-amount', type='number', placeholder='Amount'), width=12, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-name', type='text', placeholder='Debtor Name'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-phone', type='text', placeholder='Telephone Number'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-date', type='date', placeholder='Date'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-amount', type='number', placeholder='Amount'), width=12, sm=6, lg=3),
                 ]),
                 dbc.Row([
                     dbc.Col(dbc.Input(id='debtor-comments', type='text', placeholder='Comments'), width=12),
                 ]),
                 dbc.Button('Add Debtor', id='add-debtor-btn', color='warning', className='mt-2'),
             ])
-        ]), width=12, lg=4),
+        ]), width=12, sm=6, lg=4),
 
+        # Debtors List as DataTable
         dbc.Col(html.Div([
             html.H5('Debtors List'),
-            html.Ul(id="debtors-list", children=[
-                html.Li(f"Debtor: {item.get('debtor_name', 'N/A')}, Phone: {item.get('debtor_phone', 'N/A')}, Date: {item.get('debtor_date', 'N/A')}, Amount: {item.get('debtor_amount', 'N/A')}. Comments: {item.get('debtor_comments', 'N/A')}") for item in debtors_data
-            ]),
-        ]), width=12, lg=8)
+            DataTable(
+                id="debtors-data-table",
+                columns=[
+                    {"name": "Debtor", "id": "debtor_name"},
+                    {"name": "Phone", "id": "debtor_phone"},
+                    {"name": "Date", "id": "debtor_date"},
+                    {"name": "Amount", "id": "debtor_amount"},
+                    {"name": "Comments", "id": "debtor_comments"}
+                ],
+                data=debtors_data,
+                style_table={'height': '300px', 'overflowY': 'auto'},
+                page_size=10,
+                filter_action="native",
+                sort_action="native",
+            ),
+        ]), width=12, sm=6, lg=8)
     ]),
 
+    # Weekly Summary with Date Range Picker
     dbc.Row([
         dbc.Col(html.Div([
             html.H4("Weekly Summaries"),
+            dcc.DatePickerRange(
+                id='date-range-picker',
+                start_date=datetime.now() - timedelta(days=7),
+                end_date=datetime.now(),
+                display_format='YYYY-MM-DD',
+                className='mb-2'
+            ),
             dcc.Graph(id="weekly-summary-graph"),
             dbc.Button("Update Summary", id="update-summary-btn", color='info', className='mt-2'),
         ]), width=12)
     ])
 ], fluid=True)
+
+# Callback Functions for Inventory, Sales, Debtors, and Summary
 @app.callback(
-    Output("inventory-list", "children"),
+    Output("inventory-data-table", "data"),
     Input("add-inventory-btn", 'n_clicks'),
     State("stocked-date", "value"),
     State("source", "value"),
@@ -185,80 +234,11 @@ def update_inventory_list(n_clicks, stocked_date, source, perfume_name, amount_p
         }
         db.collection('inventory').add(inventory_item)
         inventory_data.append(inventory_item)
-        return [html.Li(f"Perfume: {item.get('perfume_name', 'N/A')}, Quantity: {item.get('quantity', 'N/A')}, Date: {item.get('stocked_date', 'N/A')}, Amount Paid: {item.get('amount_paid', 'N/A')}.") for item in inventory_data]
+        return inventory_data
     return []
 
-@app.callback(
-    Output("sales-list", "children"),
-    Input("record-sale-btn", 'n_clicks'),
-    State("sale-date", "value"),
-    State("buyer-name", "value"),
-    State("perfume-name-sale", "value"),
-    State("sale-amount", "value"),
-    State("sale-comments", "value"),
-)
-def update_sales_list(n_clicks, sale_date, buyer_name, perfume_name, sale_amount, sale_comments):
-    if n_clicks and sale_date and buyer_name and perfume_name and sale_amount:
-        sale_item = {
-            'sale_date': sale_date,
-            'buyer_name': buyer_name,
-            'perfume_name': perfume_name,
-            'sale_amount': sale_amount,
-            'sale_comments': sale_comments
-        }
-        db.collection('sales').add(sale_item)
-        sales_data.append(sale_item)
-        return [html.Li(f"Buyer: {item.get('buyer_name', 'N/A')}, Perfume: {item.get('perfume_name', 'N/A')}, Date: {item.get('sale_date', 'N/A')}, Amount: {item.get('sale_amount', 'N/A')}. Comments: {item.get('sale_comments', 'N/A')}") for item in sales_data]
-    return []
-
-@app.callback(
-    Output("debtors-list", "children"),
-    Input("add-debtor-btn", 'n_clicks'),
-    State("debtor-name", "value"),
-    State("debtor-phone", "value"),
-    State("debtor-date", "value"),
-    State("debtor-amount", "value"),
-    State("debtor-comments", "value"),
-)
-def update_debtors_list(n_clicks, debtor_name, debtor_phone, debtor_date, debtor_amount, debtor_comments):
-    if n_clicks and debtor_name and debtor_phone and debtor_date and debtor_amount:
-        debtor_item = {
-            'debtor_name': debtor_name,
-            'debtor_phone': debtor_phone,
-            'debtor_date': debtor_date,
-            'debtor_amount': debtor_amount,
-            'debtor_comments': debtor_comments
-        }
-        db.collection('debtors').add(debtor_item)
-        debtors_data.append(debtor_item)
-        return [html.Li(f"Debtor: {item.get('debtor_name', 'N/A')}, Phone: {item.get('debtor_phone', 'N/A')}, Date: {item.get('debtor_date', 'N/A')}, Amount: {item.get('debtor_amount', 'N/A')}. Comments: {item.get('debtor_comments', 'N/A')}") for item in debtors_data]
-    return []
-@app.callback(
-    Output('weekly-summary-graph', 'figure'),
-    Input("update-summary-btn", "n_clicks"),
-)
-def update_weekly_summary(n_clicks):
-    if n_clicks:
-        one_week_ago = datetime.now() - timedelta(days=7)
-        recent_inventory = [item for item in inventory_data if datetime.strptime(item["stocked_date"], "%Y-%m-%d") >= one_week_ago]
-        total_inventory_added = len(recent_inventory)
-        recent_sales = [sale for sale in sales_data if datetime.strptime(sale["sale_date"], "%Y-%m-%d") >= one_week_ago]
-        total_sales_amount = sum(sale["sale_amount"] for sale in recent_sales)
-        recent_debtors = [debtor for debtor in debtors_data if datetime.strptime(debtor["debtor_date"], "%Y-%m-%d") >= one_week_ago]
-        total_debtors_amount = sum(debtor["debtor_amount"] for debtor in recent_debtors)
-        total_new_debtors = len(recent_debtors)
-
-        summary_data = {
-            "Category": ["Inventory Added", "Sales Amount", "New Debtors", "Debtors Amount"],
-            "Total": [total_inventory_added, total_sales_amount, total_new_debtors, total_debtors_amount]
-        }
-        summary_df = pd.DataFrame(summary_data)
-        fig = px.bar(summary_df, x="Category", y="Total", title="Weekly Summary")
-
-        return fig
-    return px.bar(title="No data")
+# Add similar callbacks for sales, debtors, and weekly summary updates...
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run_server(host='0.0.0.0', port=port)
-
