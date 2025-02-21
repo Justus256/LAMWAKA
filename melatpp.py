@@ -48,13 +48,13 @@ app.layout = dbc.Container([
             html.H4('Inventory Management'),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='stocked-date', type='date', placeholder='Date Stocked'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='source', type='text', placeholder='Source'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='perfume-name-inventory', type='text', placeholder='Perfume Name'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='amount-paid', type='number', placeholder='Amount Paid'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='stocked-date', type='date', placeholder='Date Stocked'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='source', type='text', placeholder='Source'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='perfume-name-inventory', type='text', placeholder='Perfume Name'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='amount-paid', type='number', placeholder='Amount Paid'), width=12, sm=6, md=4, lg=3),
                 ]),
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='quantity', type='number', placeholder='Quantity'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='quantity', type='number', placeholder='Quantity'), width=12, sm=6, md=4, lg=3),
                     dbc.Col(dbc.Select(
                         id='gender',
                         options=[
@@ -63,8 +63,8 @@ app.layout = dbc.Container([
                             {'label': 'Unisex', 'value': 'Unisex'}
                         ],
                         placeholder='Gender'
-                    ), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='description', type='text', placeholder='Description'), width=12, sm=6, lg=6),
+                    ), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='description', type='text', placeholder='Description'), width=12, sm=6, md=4, lg=6),
                 ]),
                 dbc.Row([
                     dbc.Col(dcc.Upload(
@@ -81,12 +81,12 @@ app.layout = dbc.Container([
                             'margin': '10px'
                         },
                         multiple=False
-                    ), width=12, sm=6, lg=6),
-                    dbc.Col(dbc.Input(id='comments', type='text', placeholder='Comments'), width=12, sm=6, lg=6),
+                    ), width=12, sm=6, md=4, lg=6),
+                    dbc.Col(dbc.Input(id='comments', type='text', placeholder='Comments'), width=12, sm=6, md=4, lg=6),
                 ]),
                 dbc.Button('Add to Inventory', id='add-inventory-btn', color='primary', className='mt-2'),
             ])
-        ]), width=12, sm=6, lg=4),
+        ]), width=12, sm=6, md=4, lg=4),
 
         # Inventory List as DataTable
         dbc.Col(html.Div([
@@ -107,7 +107,7 @@ app.layout = dbc.Container([
                 filter_action="native",
                 sort_action="native",
             ),
-        ]), width=12, sm=6, lg=8)
+        ]), width=12, sm=6, md=8, lg=8)
     ]),
 
     # Sales Tracking
@@ -116,17 +116,17 @@ app.layout = dbc.Container([
             html.H4('Sales Tracking'),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id="sale-date", type='date', placeholder='Date Sold'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='buyer-name', type='text', placeholder='Buyer Name'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='perfume-name-sale', type='text', placeholder='Perfume Name'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='sale-amount', type='number', placeholder='Amount'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id="sale-date", type='date', placeholder='Date Sold'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='buyer-name', type='text', placeholder='Buyer Name'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='perfume-name-sale', type='text', placeholder='Perfume Name'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='sale-amount', type='number', placeholder='Amount'), width=12, sm=6, md=4, lg=3),
                 ]),
                 dbc.Row([
                     dbc.Col(dbc.Input(id='sale-comments', type='text', placeholder='Comments'), width=12),
                 ]),
                 dbc.Button('Record Sale', id='record-sale-btn', color='success', className='mt-2'),
             ])
-        ]), width=12, sm=6, lg=4),
+        ]), width=12, sm=6, md=4, lg=4),
 
         # Sales List as DataTable
         dbc.Col(html.Div([
@@ -146,7 +146,7 @@ app.layout = dbc.Container([
                 filter_action="native",
                 sort_action="native",
             ),
-        ]), width=12, sm=6, lg=8)
+        ]), width=12, sm=6, md=8, lg=8)
     ]),
 
     # Debtors Management
@@ -155,17 +155,17 @@ app.layout = dbc.Container([
             html.H4('Debtors Management'),
             dbc.Form([
                 dbc.Row([
-                    dbc.Col(dbc.Input(id='debtor-name', type='text', placeholder='Debtor Name'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-phone', type='text', placeholder='Telephone Number'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-date', type='date', placeholder='Date'), width=12, sm=6, lg=3),
-                    dbc.Col(dbc.Input(id='debtor-amount', type='number', placeholder='Amount'), width=12, sm=6, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-name', type='text', placeholder='Debtor Name'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-phone', type='text', placeholder='Telephone Number'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-date', type='date', placeholder='Date'), width=12, sm=6, md=4, lg=3),
+                    dbc.Col(dbc.Input(id='debtor-amount', type='number', placeholder='Amount'), width=12, sm=6, md=4, lg=3),
                 ]),
                 dbc.Row([
                     dbc.Col(dbc.Input(id='debtor-comments', type='text', placeholder='Comments'), width=12),
                 ]),
                 dbc.Button('Add Debtor', id='add-debtor-btn', color='warning', className='mt-2'),
             ])
-        ]), width=12, sm=6, lg=4),
+        ]), width=12, sm=6, md=4, lg=4),
 
         # Debtors List as DataTable
         dbc.Col(html.Div([
@@ -185,7 +185,7 @@ app.layout = dbc.Container([
                 filter_action="native",
                 sort_action="native",
             ),
-        ]), width=12, sm=6, lg=8)
+        ]), width=12, sm=6, md=8, lg=8)
     ]),
 
     # Weekly Summary with Date Range Picker
@@ -237,5 +237,4 @@ def update_inventory_list(n_clicks, stocked_date, source, perfume_name, amount_p
         return inventory_data
     return []
 
-# Add similar callbacks for sales, debtors, and weekly summary updates...
 server = app.server
