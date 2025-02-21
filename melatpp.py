@@ -238,3 +238,4 @@ def update_inventory_list(n_clicks, stocked_date, source, perfume_name, amount_p
     return []
 
 server = app.server
+
