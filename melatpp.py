@@ -22,7 +22,7 @@ if firebase_credentials:
 else:
     print("Firebase credentials not found in environment variables")
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # Initialize data lists
 inventory_data = []
