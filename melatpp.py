@@ -239,6 +239,6 @@ def update_inventory_list(n_clicks, stocked_date, source, perfume_name, amount_p
 
 # Add similar callbacks for sales, debtors, and weekly summary updates...
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run_server(host='0.0.0.0', port=port)
+
+port = int(os.environ.get("PORT", 10000))
+app.run_server(host='0.0.0.0', port=port, debug=True)
