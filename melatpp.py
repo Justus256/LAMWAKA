@@ -23,7 +23,7 @@ if firebase_credentials:
 else:
     print("Firebase credentials not found in environment variables")
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # Initialize data lists
 inventory_data = []
@@ -190,119 +190,17 @@ app.layout = dbc.Container([
     ]),
 
     # Weekly Summary with Date Range Picker
-    dbc.Row([
-        dbc.Col(html.Div([
-            html.H4("Weekly Summaries"),
-            dcc.DatePickerRange(
-                id='date-range-picker',
-                start_date=datetime.now() - timedelta(days=7),
-                end_date=datetime.now(),
-                display_format='YYYY-MM-DD',
-                className='mb-2'
-            ),
-            dcc.Graph(id="weekly-summary-graph"),
-            dbc.Button("Update Summary", id="update-summary-btn", color='info', className='mt-2'),
-        ]), width=12)
-    ])
-], fluid=True)
-
-# Callback Functions for Inventory, Sales, Debtors, and Summary
-@app.callback(
-    Output("inventory-data-table", "data"),
-    Input("add-inventory-btn", 'n_clicks'),
-    State("stocked-date", "value"),
-    State("source", "value"),
-    State("perfume-name-inventory", "value"),
-    State("amount-paid", "value"),
-    State("quantity", "value"),
-    State("gender", "value"),
-    State("description", "value"),
-    State("upload-image", "contents"),
-    State("comments", "value"),
-)
-def update_inventory_list(n_clicks, stocked_date, source, perfume_name, amount_paid, quantity, gender, description, contents, comments):
-    if n_clicks and stocked_date and source and perfume_name and amount_paid and quantity and gender and description:
-        inventory_item = {
-            'stocked_date': stocked_date,
-            'source': source,
-            'perfume_name': perfume_name,
-            'amount_paid': amount_paid,
-            'quantity': quantity,
-            'gender': gender,
-            'description': description,
-            'contents': contents,
-            'comments': comments
-        }
-        db.collection('inventory').add(inventory_item)
-        inventory_data.append(inventory_item)
-        return inventory_data
-    return []
-
-@app.callback(
-    Output("sales-data-table", "data"),
-    Input("record-sale-btn", 'n_clicks'),
-    State("sale-date", "value"),
-    State("buyer-name", "value"),
-    State("perfume-name-sale", "value"),
-    State("sale-amount", "value"),
-    State("sale-comments", "value"),
-)
-def record_sale(n_clicks, sale_date, buyer_name, perfume_name, sale_amount, sale_comments):
-    if n_clicks and sale_date and buyer_name and perfume_name and sale_amount:
-        sale_item = {
-            'sale_date': sale_date,
-            'buyer_name': buyer_name,
-            'perfume_name': perfume_name,
-            'sale_amount': sale_amount,
-            'sale_comments': sale_comments
-        }
-        db.collection('sales').add(sale_item)
-        sales_data.append(sale_item)
-        return sales_data
-    return []
-@app.callback(
-    Output("debtors-data-table", "data"),
-    Input("add-debtor-btn", 'n_clicks'),
-    State("debtor-name", "value"),
-    State("debtor-phone", "value"),
-    State("debtor-date", "value"),
-    State("debtor-amount", "value"),
-    State("debtor-comments", "value"),
-)
-def add_debtor(n_clicks, debtor_name, debtor_phone, debtor_date, debtor_amount, debtor_comments):
-    if n_clicks and debtor_name and debtor_phone and debtor_date and debtor_amount:
-        debtor_item = {
-            'debtor_name': debtor_name,
-            'debtor_phone': debtor_phone,
-            'debtor_date': debtor_date,
-            'debtor_amount': debtor_amount,
-            'debtor_comments': debtor_comments
-        }
-        db.collection('debtors').add(debtor_item)
-        debtors_data.append(debtor_item)
-        return debtors_data
-    return []
-
-# Callback for Weekly Summary
-@app.callback(
-    Output("weekly-summary-graph", "figure"),
-    Input("update-summary-btn", 'n_clicks'),
-    State('date-range-picker', 'start_date'),
-    State('date-range-picker', 'end_date'),
-)
-def update_weekly_summary(n_clicks, start_date, end_date):
-    if n_clicks and start_date and end_date:
-        # Here you would fetch or compute data based on the date range
-        # For simplicity, let's use a mock plot for this purpose
-        summary_data = pd.DataFrame({
-            "Date": pd.date_range(start=start_date, end=end_date, freq='D'),
-            "Sales": [10, 15, 20, 25, 18, 22, 30]  # Mock sales numbers
-        })
-        fig = px.line(summary_data, x="Date", y="Sales", title="Sales Over Time")
-        return fig
-    return {}
+    dbc.Col(html.Div([
+        html.H4("Weekly Summaries"),
+        dcc.DatePickerRange(
+            id='date-range-picker',
+            start_date=datetime.now() - timedelta(days=7),
+            end_date=datetime.now(),
+            display_format='YYYY-MM-DD'
+        ),
+        dcc.Graph(id="weekly-summary-graph")
+    ]), width=12)
+])
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-
