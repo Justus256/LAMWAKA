@@ -1,1 +1,1 @@
-web: gunicorn melatpp:server 
+web: streamlit run melat2.py 
